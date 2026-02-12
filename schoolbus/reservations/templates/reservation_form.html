@@ -1,0 +1,295 @@
+{% extends 'base.html' %}
+
+{% block title %}Book Reservation - School Bus{% endblock %}
+
+{% block extra_css %}
+<style>
+    /* Wrapper to center the form vertically/horizontally like the original body style */
+    .form-wrapper {
+        min-height: calc(100vh - 180px); /* Adjust based on header/footer */
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        padding: 2rem 0;
+    }
+
+    .booking-container {
+        display: flex;
+        max-width: 1000px;
+        width: 100%;
+        background: white;
+        border-radius: 15px;
+        overflow: hidden;
+        box-shadow: 0 20px 40px rgba(0, 0, 0, 0.1);
+    }
+    
+    .left-panel {
+        flex: 1;
+        background: linear-gradient(135deg, #4facfe 0%, #00f2fe 100%);
+        color: white;
+        padding: 40px;
+        display: flex;
+        flex-direction: column;
+        justify-content: center;
+    }
+    
+    .right-panel {
+        flex: 1.5;
+        padding: 40px;
+    }
+    
+    .logo {
+        font-size: 24px;
+        font-weight: bold;
+        margin-bottom: 20px;
+        color: white;
+        text-decoration: none;
+        display: block;
+    }
+    
+    .bus-icon-large {
+        font-size: 60px;
+        margin-bottom: 20px;
+        text-align: center;
+        display: block;
+    }
+    
+    .left-panel h1 {
+        font-size: 28px;
+        margin-bottom: 15px;
+        text-align: center;
+    }
+    
+    .left-panel p {
+        line-height: 1.6;
+        opacity: 0.9;
+        text-align: center;
+        margin-bottom: 30px;
+    }
+    
+    .benefits {
+        list-style: none;
+    }
+    
+    .benefits li {
+        padding: 10px 0;
+        border-bottom: 1px solid rgba(255, 255, 255, 0.2);
+        display: flex;
+        align-items: center;
+    }
+    
+    .benefits li:before {
+        content: "✓";
+        margin-right: 10px;
+        font-weight: bold;
+    }
+    
+    .form-title {
+        color: #333;
+        font-size: 28px;
+        margin-bottom: 5px;
+    }
+    
+    .form-subtitle {
+        color: #666;
+        margin-bottom: 30px;
+    }
+    
+    .form-group {
+        margin-bottom: 20px;
+    }
+    
+    .form-group label {
+        display: block;
+        margin-bottom: 8px;
+        color: #555;
+        font-weight: 500;
+    }
+    
+    .form-group input, .form-group select {
+        width: 100%;
+        padding: 12px 15px;
+        border: 2px solid #e1e5e9;
+        border-radius: 8px;
+        font-size: 16px;
+        transition: all 0.3s;
+        background: #f8f9fa;
+    }
+    
+    .form-group input:focus, .form-group select:focus {
+        outline: none;
+        border-color: #4facfe;
+        background: white;
+        box-shadow: 0 0 0 3px rgba(79, 172, 254, 0.1);
+    }
+    
+    .form-row {
+        display: grid;
+        grid-template-columns: 1fr 1fr;
+        gap: 20px;
+    }
+    
+    .btn-submit {
+        width: 100%;
+        padding: 15px;
+        background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+        color: white;
+        border: none;
+        border-radius: 8px;
+        font-size: 18px;
+        font-weight: bold;
+        cursor: pointer;
+        transition: all 0.3s;
+        margin-top: 10px;
+    }
+    
+    .btn-submit:hover {
+        transform: translateY(-2px);
+        box-shadow: 0 5px 15px rgba(102, 126, 234, 0.4);
+    }
+    
+    .btn-back {
+        display: inline-block;
+        width: 100%;
+        padding: 12px;
+        background: #f8f9fa;
+        color: #667eea;
+        text-align: center;
+        border: 2px solid #e1e5e9;
+        border-radius: 8px;
+        text-decoration: none;
+        font-weight: 500;
+        margin-top: 15px;
+        transition: all 0.3s;
+    }
+    
+    .btn-back:hover {
+        background: #667eea;
+        color: white;
+        border-color: #667eea;
+    }
+    
+    @media (max-width: 768px) {
+        .booking-container {
+            flex-direction: column;
+        }
+        
+        .left-panel { order: 2; }
+        .right-panel { order: 1; }
+        
+        .form-row {
+            grid-template-columns: 1fr;
+        }
+    }
+</style>
+{% endblock %}
+
+{% block content %}
+<div class="form-wrapper">
+    <div class="booking-container">
+        <div class="left-panel">
+            <div class="bus-icon-large">🚌</div>
+            <h1>Book Your Ride</h1>
+            <p>Safe, reliable, and comfortable school bus transportation for students and parents.</p>
+            
+            <ul class="benefits">
+                <li>Real-time bus tracking</li>
+                <li>Certified drivers</li>
+                <li>GPS monitored routes</li>
+                <li>Safe and comfortable seats</li>
+                <li>24/7 customer support</li>
+            </ul>
+        </div>
+        
+        <div class="right-panel">
+            <h2 class="form-title">Book a School Bus</h2>
+            <p class="form-subtitle">Fill in the details below to reserve your seat</p>
+            
+            {% if form.errors %}
+                <div class="alert alert-error">
+                    Please correct the errors below.
+                </div>
+            {% endif %}
+            
+            <form method="post">
+                {% csrf_token %}
+                
+                <div class="form-group">
+                    <label for="id_bus">Select Bus</label>
+                    <select name="bus" id="id_bus" required>
+                        <option value="">-- Choose a Bus --</option>
+                        {% for bus in buses %}
+                            <option value="{{ bus.id }}">Bus {{ bus.bus_number }} ({{ bus.capacity }} seats) - Driver: {{ bus.driver }}</option>
+                        {% endfor %}
+                    </select>
+                </div>
+                
+                <div class="form-row">
+                    <div class="form-group">
+                        <label for="id_reservation_date">Travel Date</label>
+                        <input type="date" name="reservation_date" id="id_reservation_date" required>
+                    </div>
+                    
+                    <div class="form-group">
+                        <label for="id_pickup_time">Travel Time</label>
+                        <input type="time" name="pickup_time" id="id_pickup_time" required>
+                    </div>
+                </div>
+                
+                <div class="form-group">
+                    <label for="id_pickup_location">Pickup Location</label>
+                    <input type="text" name="pickup_location" id="id_pickup_location" placeholder="Enter pickup address" required>
+                </div>
+                
+                <div class="form-group">
+                    <label for="id_dropoff_location">Dropoff Location</label>
+                    <input type="text" name="dropoff_location" id="id_dropoff_location" placeholder="Enter dropoff address" required>
+                </div>
+                
+                <button type="submit" class="btn-submit">Book Now</button>
+                <a href="{% url 'home' %}" class="btn-back">← Back to Home</a>
+            </form>
+        </div>
+    </div>
+</div>
+{% endblock %}
+
+{% block extra_js %}
+<script>
+    // Set minimum date to today
+    const today = new Date().toISOString().split('T')[0];
+    const dateInput = document.getElementById('id_reservation_date');
+    if (dateInput) {
+        dateInput.min = today;
+    }
+    
+    // Set default time to next hour
+    const now = new Date();
+    now.setHours(now.getHours() + 1);
+    const nextHour = now.toTimeString().slice(0, 5);
+    const timeInput = document.getElementById('id_pickup_time');
+    if (timeInput) {
+        timeInput.value = nextHour;
+    }
+    
+    // Add some sample locations
+    const pickupInput = document.getElementById('id_pickup_location');
+    const dropoffInput = document.getElementById('id_dropoff_location');
+    
+    if (pickupInput && dropoffInput) {
+        const sampleLocations = [
+            "Main School Gate",
+            "North Campus Entrance", 
+            "South Parking Lot",
+            "Student Union Building",
+            "Library Front Entrance",
+            "Gymnasium Parking",
+            "Science Building Drop-off",
+            "Arts Center Entrance"
+        ];
+        
+        pickupInput.placeholder = "e.g., " + sampleLocations[0];
+        dropoffInput.placeholder = "e.g., " + sampleLocations[1];
+    }
+</script>
+{% endblock %}

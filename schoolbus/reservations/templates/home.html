@@ -1,0 +1,148 @@
+{% extends 'base.html' %}
+
+{% block title %}Home - School Bus Reservation{% endblock %}
+
+{% block extra_css %}
+<style>
+    .container { width: 100%; max-width: 1200px; margin: 0 auto; padding: 20px; }
+    .hero {
+        background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+        color: white;
+        padding: 4rem 2rem;
+        text-align: center;
+        border-radius: 12px;
+        margin-bottom: 3rem;
+        box-shadow: 0 10px 15px rgba(0,0,0,0.1);
+    }
+
+    .hero h1 { font-size: 3rem; margin-bottom: 1rem; }
+    .hero p { font-size: 1.25rem; margin-bottom: 2rem; opacity: 0.9; }
+
+    .btn-hero {
+        background: white;
+        color: #667eea;
+        padding: 1rem 2rem;
+        font-weight: bold;
+        text-decoration: none;
+        border-radius: 30px;
+        transition: transform 0.2s;
+        display: inline-block;
+        margin: 0.5rem;
+    }
+
+    .btn-hero:hover {
+        transform: translateY(-3px);
+        box-shadow: 0 4px 12px rgba(0,0,0,0.2);
+    }
+    
+    .btn-disabled { opacity: 0.6; cursor: not-allowed; background: #cbd5e0; color: #4a5568; }
+
+    .features {
+        display: grid;
+        grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+        gap: 2rem;
+        margin: 3rem 0;
+    }
+
+    .feature-card {
+        background: white;
+        padding: 2rem;
+        border-radius: 10px;
+        box-shadow: 0 4px 6px rgba(0,0,0,0.05);
+        text-align: center;
+        transition: transform 0.3s;
+    }
+
+    .feature-card:hover { transform: translateY(-5px); }
+    .feature-card h3 { color: #2d3748; margin-bottom: 1rem; }
+    
+    .steps-grid {
+        display: grid;
+        grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+        gap: 1.5rem;
+        margin-top: 2rem;
+    }
+    
+    .step-card {
+        background: white;
+        padding: 1.5rem;
+        border-radius: 10px;
+        text-align: center;
+    }
+    .step-icon { font-size: 2.5rem; margin-bottom: 1rem; display: block; }
+</style>
+{% endblock %}
+
+{% block content %}
+<div class="hero">
+    <h1>School Bus Reservation System</h1>
+    <p>Safe, Reliable, and Efficient School Transportation</p>
+
+    <div>
+        {% if user.is_authenticated %}
+            {% if buses_available %}
+                <a href="{% url 'make_reservation' %}" class="btn-hero">📅 Book a Reservation</a>
+            {% else %}
+                <span class="btn-hero btn-disabled">🚫 No Buses Available</span>
+            {% endif %}
+            <a href="{% url 'my_reservations' %}" class="btn-hero" style="background: rgba(255,255,255,0.2); color: white;">📋 View My Bookings</a>
+        {% else %}
+            <a href="{% url 'register' %}" class="btn-hero">🚀 Get Started</a>
+            <a href="{% url 'login' %}" class="btn-hero" style="background: rgba(255,255,255,0.2); color: white;">🔐 Login to Book</a>
+        {% endif %}
+    </div>
+</div>
+
+<div class="features">
+    <div class="feature-card">
+        <h3>🚌 Easy Booking</h3>
+        <p>Book your school bus rides in just a few clicks. Select your preferred time and location.</p>
+    </div>
+    <div class="feature-card">
+        <h3>📍 Real-time Tracking</h3>
+        <p>Track your bus in real-time and receive notifications about arrival times.</p>
+    </div>
+    <div class="feature-card">
+        <h3>🛡️ Safe & Reliable</h3>
+        <p>All our drivers are certified and buses are regularly maintained for safety.</p>
+    </div>
+</div>
+
+<div style="text-align: center; margin: 4rem 0;">
+    <h2 style="color: #2d3748; margin-bottom: 2rem;">How It Works</h2>
+    <div class="steps-grid">
+        <div class="step-card">
+            <span class="step-icon">1️⃣</span>
+            <h3>Register</h3>
+            <p>Create your account</p>
+        </div>
+        <div class="step-card">
+            <span class="step-icon">2️⃣</span>
+            <h3>Login</h3>
+            <p>Access your dashboard</p>
+        </div>
+        <div class="step-card">
+            <span class="step-icon">3️⃣</span>
+            <h3>Book</h3>
+            <p>Make a reservation</p>
+        </div>
+        <div class="step-card">
+            <span class="step-icon">4️⃣</span>
+            <h3>Ride</h3>
+            <p>Enjoy your safe ride</p>
+        </div>
+    </div>
+</div>
+{% endblock %}
+
+{% block extra_js %}
+<script>
+    document.addEventListener('DOMContentLoaded', function() {
+        // Animation for buttons
+        const hero = document.querySelector('.hero');
+        setTimeout(() => {
+            hero.style.opacity = '1';
+        }, 100);
+    });
+</script>
+{% endblock %}

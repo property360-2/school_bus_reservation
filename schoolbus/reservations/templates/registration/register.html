@@ -1,0 +1,153 @@
+{% extends 'base.html' %}
+
+{% block title %}Register - School Bus Reservation{% endblock %}
+
+{% block extra_css %}
+<style>
+    .auth-container {
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        min-height: 85vh;
+        width: 100%;
+        padding: 2rem 0;
+    }
+
+    .auth-card {
+        background: white;
+        padding: 2.5rem;
+        border-radius: 12px;
+        box-shadow: 0 10px 25px rgba(0,0,0,0.1);
+        width: 100%;
+        max-width: 450px;
+    }
+
+    .auth-title {
+        text-align: center;
+        margin-bottom: 0.5rem;
+        color: #2d3748;
+    }
+    
+    .auth-subtitle {
+        text-align: center;
+        color: #718096;
+        margin-bottom: 2rem;
+    }
+
+    .form-group {
+        margin-bottom: 1.25rem;
+    }
+
+    .form-group label {
+        display: block;
+        margin-bottom: 0.5rem;
+        color: #4a5568;
+        font-weight: 500;
+        font-size: 0.9rem;
+    }
+
+    .form-group input, .form-group select {
+        width: 100%;
+        padding: 0.75rem;
+        border: 2px solid #e2e8f0;
+        border-radius: 6px;
+        transition: border-color 0.2s;
+        font-size: 1rem;
+        background: #fff;
+    }
+
+    .form-group input:focus, .form-group select:focus {
+        border-color: #667eea;
+        outline: none;
+    }
+
+    .btn-auth {
+        width: 100%;
+        padding: 0.8rem;
+        background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+        color: white;
+        border: none;
+        border-radius: 6px;
+        font-size: 1rem;
+        font-weight: bold;
+        cursor: pointer;
+        margin-top: 1rem;
+        transition: opacity 0.2s;
+    }
+
+    .btn-auth:hover { opacity: 0.9; }
+
+    .auth-footer {
+        text-align: center;
+        margin-top: 1.5rem;
+        color: #718096;
+        font-size: 0.9rem;
+    }
+    
+    .auth-footer a { color: #5a67d8; text-decoration: none; font-weight: 600; }
+</style>
+{% endblock %}
+
+{% block content %}
+<div class="auth-container">
+    <div class="auth-card">
+        <h2 class="auth-title">Create Account</h2>
+        <p class="auth-subtitle">Join School Bus Reservation System</p>
+        
+        {% if form.errors %}
+            <div class="alert alert-error">
+                Please correct the errors below.
+                <ul>
+                {% for field in form %}
+                    {% for error in field.errors %}
+                        <li>{{ field.label }}: {{ error }}</li>
+                    {% endfor %}
+                {% endfor %}
+                {% for error in form.non_field_errors %}
+                    <li>{{ error }}</li>
+                {% endfor %}
+                </ul>
+            </div>
+        {% endif %}
+
+        <form method="post">
+            {% csrf_token %}
+            
+            <div class="form-group">
+                <label for="id_username">Username</label>
+                <input type="text" name="username" id="id_username" required>
+            </div>
+            
+            <div class="form-group">
+                <label for="id_email">Email</label>
+                <input type="email" name="email" id="id_email" required>
+            </div>
+            
+            <div class="form-group">
+                <label for="id_password1">Password</label>
+                <input type="password" name="password1" id="id_password1" required>
+            </div>
+            
+            <div class="form-group">
+                <label for="id_password2">Confirm Password</label>
+                <input type="password" name="password2" id="id_password2" required>
+            </div>
+            
+            <div class="form-group">
+                <label for="id_user_type">User Type</label>
+                <select name="user_type" id="id_user_type">
+                    <option value="student">Student</option>
+                    <option value="parent">Parent</option>
+                    <option value="driver">Driver</option>
+                </select>
+            </div>
+
+            <button type="submit" class="btn-auth">Register</button>
+        </form>
+
+        <div class="auth-footer">
+            <p>Already have an account? <a href="{% url 'login' %}">Login here</a></p>
+        </div>
+    </div>
+</div>
+{% endblock %}

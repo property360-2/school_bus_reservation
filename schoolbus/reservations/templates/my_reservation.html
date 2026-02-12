@@ -1,0 +1,154 @@
+{% extends 'base.html' %}
+
+{% block title %}My Reservations - School Bus{% endblock %}
+
+{% block extra_css %}
+<style>
+    .stats-grid {
+        display: grid;
+        grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+        gap: 1.5rem;
+        margin-bottom: 2rem;
+    }
+
+    .stat-card {
+        background: white;
+        padding: 1.5rem;
+        border-radius: 10px;
+        box-shadow: 0 2px 4px rgba(0,0,0,0.05);
+        text-align: center;
+    }
+
+    .card {
+        border: none;
+        border-radius: 15px;
+        box-shadow: 0 10px 20px rgba(0,0,0,0.08);
+        transition: transform 0.3s;
+        width: 100%;
+        max-width: 1200px;
+        margin: 0 auto 2rem auto;
+    }
+
+    .stat-number {
+        font-size: 2.5rem;
+        font-weight: bold;
+        color: #2d3748;
+        margin: 0.5rem 0;
+    }
+
+    .stat-label {
+        color: #718096;
+        font-size: 0.9rem;
+        text-transform: uppercase;
+        letter-spacing: 0.05em;
+    }
+
+    .action-btn {
+        padding: 0.4rem 0.8rem;
+        border-radius: 4px;
+        text-decoration: none;
+        font-size: 0.85rem;
+        margin-right: 0.5rem;
+        display: inline-block;
+    }
+
+    .btn-cancel {
+        background: #fed7d7;
+        color: #9b2c2c;
+    }
+    
+    .btn-cancel:hover { background: #feb2b2; }
+
+    .empty-state {
+        text-align: center;
+        padding: 4rem 2rem;
+        color: #718096;
+    }
+
+    .empty-icon { font-size: 3rem; margin-bottom: 1rem; display: block; }
+</style>
+{% endblock %}
+
+{% block content %}
+<div class="stats-grid">
+    <div class="stat-card">
+        <div class="stat-label">Pending</div>
+        <div class="stat-number" style="color: #d69e2e;">{{ pending_count }}</div>
+    </div>
+    <div class="stat-card">
+        <div class="stat-label">Confirmed</div>
+        <div class="stat-number" style="color: #38a169;">{{ confirmed_count }}</div>
+    </div>
+    <div class="stat-card">
+        <div class="stat-label">Cancelled</div>
+        <div class="stat-number" style="color: #e53e3e;">{{ cancelled_count }}</div>
+    </div>
+    <div class="stat-card">
+        <div class="stat-label">Total</div>
+        <div class="stat-number" style="color: #3182ce;">{{ total_count }}</div>
+    </div>
+</div>
+
+<div class="card">
+    <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 1.5rem;">
+        <h2 style="font-size: 1.5rem; color: #2d3748;">My Reservations</h2>
+        <a href="{% url 'make_reservation' %}" class="btn btn-primary">Make New Reservation</a>
+    </div>
+
+    {% if reservations %}
+        <div class="table-container">
+            <table>
+                <thead>
+                    <tr>
+                        <th>Bus</th>
+                        <th>Travel Date</th>
+                        <th>Pickup Time</th>
+                        <th>Pickup Location</th>
+                        <th>Dropoff Location</th>
+                        <th>Status</th>
+                        <th>Actions</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for res in reservations %}
+                    <tr>
+                        <td data-label="Bus">
+                            <strong>Bus {{ res.bus.bus_number }}</strong><br>
+                            <small>{{ res.bus.driver }}</small>
+                        </td>
+                        <td data-label="Travel Date">{{ res.reservation_date }}</td>
+                        <td data-label="Pickup Time">{{ res.pickup_time }}</td>
+                        <td data-label="Pickup">{{ res.pickup_location }}</td>
+                        <td data-label="Dropoff">{{ res.dropoff_location }}</td>
+                        <td data-label="Status">
+                            <span class="status status-{{ res.status }}">
+                                {{ res.get_status_display }}
+                            </span>
+                        </td>
+                        <td data-label="Actions">
+                            {% if res.status == 'pending' %}
+                                <a href="{% url 'cancel_reservation' res.id %}" 
+                                   class="action-btn btn-cancel"
+                                   onclick="return confirm('Are you sure you want to cancel this reservation?');">
+                                   Cancel
+                                </a>
+                            {% else %}
+                                <span style="color: #a0aec0; font-size: 0.9rem;">No actions</span>
+                            {% endif %}
+                        </td>
+                    </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        </div>
+    {% else %}
+        <div class="empty-state">
+            <span class="empty-icon">📝</span>
+            <h3>No reservations found</h3>
+            <p>You haven't made any reservations yet.</p>
+            <br>
+            <a href="{% url 'make_reservation' %}" class="btn btn-primary">Book Your First Ride</a>
+        </div>
+    {% endif %}
+</div>
+{% endblock %}
